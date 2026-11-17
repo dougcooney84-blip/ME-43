@@ -1,0 +1,42 @@
+name: Build ME-43 for Mac
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-latest
+
+    steps:
+      - name: Download project
+        uses: actions/checkout@v4
+
+      - name: Configure
+        run: >-
+          cmake -S . -B build
+          -DCMAKE_BUILD_TYPE=Release
+          -DCMAKE_OSX_DEPLOYMENT_TARGET=13.0
+          -DCMAKE_OSX_ARCHITECTURES="arm64;x86_64"
+          -DBUILD_TESTING=ON
+
+      - name: Build plugin and tests
+        run: >-
+          cmake --build build --config Release
+          --target StageASynth_VST3 StageASynth_Standalone StageASynthTests
+          --parallel 2
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
+
+      - name: Package VST3
+        run: |
+          cd build/StageASynth_artefacts/Release/VST3
+          ditto -c -k --sequesterRsrc --keepParent "ME - 43.vst3" "$GITHUB_WORKSPACE/ME-43-VST3.zip"
+
+      - name: Upload VST3
+        uses: actions/upload-artifact@v4
+        with:
+          name: ME-43-Mac-VST3
+          path: ME-43-VST3.zip
+          if-no-files-found: error
