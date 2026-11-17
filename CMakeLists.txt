@@ -42,49 +42,9 @@ juce_add_plugin(StageASynth
 )
 
 target_sources(StageASynth PRIVATE
-    Source/PluginProcessor.cpp
-    Source/PluginEditor.cpp
+    PluginProcessor.cpp
+    PluginEditor.cpp
 )
 
 target_compile_definitions(StageASynth PUBLIC
-    JUCE_WEB_BROWSER=0
-    JUCE_USE_CURL=0
-)
-
-target_link_libraries(StageASynth PRIVATE
-    juce::juce_audio_utils
-    juce::juce_audio_processors
-    juce::juce_dsp
-    PUBLIC
-    juce::juce_recommended_config_flags
-    juce::juce_recommended_lto_flags
-    juce::juce_recommended_warning_flags
-)
-
-if(BUILD_TESTING)
-    juce_add_console_app(StageASynthTests
-        PRODUCT_NAME "Stage A Synth Tests"
-    )
-
-    target_sources(StageASynthTests PRIVATE
-        Tests/PluginProcessorTests.cpp
-        Source/PluginProcessor.cpp
-        Source/PluginEditor.cpp
-    )
-
-    target_compile_definitions(StageASynthTests PRIVATE
-        JUCE_WEB_BROWSER=0
-        JUCE_USE_CURL=0
-        STAGE_A_SYNTH_TESTING=1
-    )
-
-    target_link_libraries(StageASynthTests PRIVATE
-        juce::juce_audio_utils
-        juce::juce_audio_processors
-        juce::juce_dsp
-        juce::juce_recommended_config_flags
-        juce::juce_recommended_warning_flags
-    )
-
-    add_test(NAME StageASynthRegressionTests COMMAND StageASynthTests)
-endif()
+    JUCE_WEB
